@@ -1,4 +1,4 @@
-package com.ufrn.projetogcm;
+package com.ufrn.gcm;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
