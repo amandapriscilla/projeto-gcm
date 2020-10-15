@@ -14,11 +14,13 @@ public class ComandoCreditar implements ComandoBanco {
 		this.valor = valor;
 	}
 	
-	public BigDecimal execute() {
-		if(valor.compareTo(BigDecimal.ZERO)>=0) {
-			conta.setSaldo(conta.getSaldo().add(valor));
-			return conta.getSaldo();
+	@Override
+	public BigDecimal execute() throws Exception {
+		if(valor.compareTo(BigDecimal.ZERO) < 0) {
+			throw new Exception("Erro: Valor a creditar não pode ser negativo!");
 		}
-		return null;
+		
+		conta.setSaldo(conta.getSaldo().add(valor));
+		return conta.getSaldo();
 	}
 }

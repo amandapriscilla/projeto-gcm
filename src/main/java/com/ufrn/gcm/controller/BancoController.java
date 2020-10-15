@@ -18,40 +18,44 @@ public class BancoController {
 	@GetMapping("/verSaldo/{numero}")
 	public String verSaldo(@PathVariable(value = "numero") int numeroConta) {
 		try {
-			return String.format("A conta %d possui o saldo de %s", numeroConta, 
-					bancoService.formatarMoeda(bancoService.verSaldo(numeroConta)));
+			BigDecimal saldo = bancoService.verSaldo(numeroConta);
+			return String.format("A conta %d possui o saldo de %s.", numeroConta, bancoService.formatarMoeda(saldo));
 		} catch (Exception e) {
-			return "Erro: Não foi possível encontrar a conta bancária!";
+			return e.getMessage();
 		}
 	}
 	
-	@GetMapping("/creditarConta/{numero}/{valor}")
+	@GetMapping("/creditar/{numero}/{valor}")
 	public String creditarConta(@PathVariable(value = "numero") int numeroConta, @PathVariable(value = "valor") BigDecimal valor ) {
 		try {
-			return String.format("A conta %d possui o saldo de %s", numeroConta, 
-					bancoService.formatarMoeda(bancoService.creditarConta(numeroConta, valor)));
+			BigDecimal novoSaldo = bancoService.creditarConta(numeroConta, valor);
+			return String.format("Valor de %s creditado na conta %d. Novo saldo: %s.", 
+					bancoService.formatarMoeda(valor), numeroConta, bancoService.formatarMoeda(novoSaldo));
 		} catch (Exception e) {
-			return "Erro: Crédito negativo é inválido!";
+			return e.getMessage();
 		}
 	}
 	
-	@GetMapping("/debitarConta/{numero}/{valor}")
+	@GetMapping("/debitar/{numero}/{valor}")
 	public String debitarConta(@PathVariable(value = "numero") int numeroConta, @PathVariable(value = "valor") BigDecimal valor ) {
 		try {
-			return String.format("A conta %d possui o saldo de %s", numeroConta, 
-					bancoService.formatarMoeda(bancoService.debitarConta(numeroConta, valor)));
+			BigDecimal novoSaldo = bancoService.debitarConta(numeroConta, valor);
+			return String.format("Valor de %s debitado da conta %d. Novo saldo: %s.", 
+					bancoService.formatarMoeda(valor), numeroConta, bancoService.formatarMoeda(novoSaldo));					
 		} catch (Exception e) {
-			return "Erro: Saldo insuficiente para debitar";
+			return e.getMessage();
 		}
 	}
 	
-	@GetMapping("/transferir/{numero}/{numero2}/{valor}")
-	public String transferir(@PathVariable(value = "numero") int numeroConta, @PathVariable(value = "numero2") int numeroConta2, @PathVariable(value = "valor") BigDecimal valor ) {
+	@GetMapping("/transferir/{numeroOrigem}/{numeroDestino}/{valor}")
+	public String transferir(@PathVariable(value = "numeroOrigem") int numeroContaOrigem, 
+			@PathVariable(value = "numeroDestino") int numeroContaDestino, @PathVariable(value = "valor") BigDecimal valor ) {
 		try {
-			return String.format("A conta %d possui o saldo de %s", numeroConta, 
-					bancoService.formatarMoeda(bancoService.transferir(numeroConta, numeroConta2, valor)));
+			BigDecimal novoSaldo = bancoService.transferir(numeroContaOrigem, numeroContaDestino, valor);
+			return String.format("Valor de %s transferido para a conta %d. Novo saldo da conta %d: %s.", 
+					bancoService.formatarMoeda(valor), numeroContaDestino, numeroContaOrigem, bancoService.formatarMoeda(novoSaldo));
 		} catch (Exception e) {
-			return "";
+			return e.getMessage();
 		}
 	}
 }

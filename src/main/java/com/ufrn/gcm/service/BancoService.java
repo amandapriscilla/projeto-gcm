@@ -46,47 +46,40 @@ public class BancoService {
 	public String formatarMoeda(BigDecimal saldo) {
 		return NumberFormat.getCurrencyInstance().format(saldo.setScale(2).doubleValue());
 	}
+	
+	private ContaBancaria getContaBancaria(int numero) throws Exception {
+		ContaBancaria conta = this.banco.getContaBancaria(numero);
+		
+		if (conta == null) {
+			throw new Exception(String.format("Erro: Conta %d não encontrada!"));
+		}
+		
+		return conta;
+	}
 
 	public BigDecimal verSaldo(int numero) throws Exception {
-		ComandoBanco comando = new ComandoVerSaldo(banco, numero);
-		BigDecimal saldo = comando.execute();
-		
-		if (saldo == null) {
-			throw new Exception("Conta não encontrada!");
-		}
-		return saldo;
+		ContaBancaria conta = this.getContaBancaria(numero);
+		ComandoBanco comando = new ComandoVerSaldo(conta);
+		return comando.execute();		
 	}
 	
 	public BigDecimal creditarConta(int numero, BigDecimal valor) throws Exception {
 		ContaBancaria conta = this.banco.getContaBancaria(numero);
 		ComandoBanco comando = new ComandoCreditar(conta, valor);
-		valor = comando.execute();
-		
-		if (valor == null) {
-			throw new Exception("Valor inválido!");
-		}
-		return valor;
+		return comando.execute();		
 	}
 	
 	public BigDecimal debitarConta(int numero, BigDecimal valor) throws Exception {
-		ContaBancaria conta = this.banco.getContaBancaria(numero);
+		ContaBancaria conta = this.getContaBancaria(numero);
 		ComandoBanco comando = new ComandoDebitar(conta, valor);
-		valor = comando.execute();
-		
-		if (valor == null) {
-			throw new Exception("Saldo insuficiente!");
-		}
-		return valor;
+		return comando.execute();		
 	}
 	
-	public BigDecimal transferir(int A, int B, BigDecimal valor) throws Exception {
-		ContaBancaria Aconta = this.banco.getContaBancaria(A);
-		ContaBancaria Bconta = this.banco.getContaBancaria(B);	
-		ComandoBanco comando = new ComandoTransferir(Aconta, Bconta, valor);
-		valor = comando.execute();
-		if (valor == null) {
-			throw new Exception("Algo deu errado!");
-		}
-		return valor;
+	public BigDecimal transferir(int numeroContaOrigem, int numeroContaDestino, BigDecimal valor) throws Exception {
+		ContaBancaria contaOrigem = this.getContaBancaria(numeroContaOrigem);
+		ContaBancaria contaDestino = this.getContaBancaria(numeroContaDestino);	
+		ComandoBanco comando = new ComandoTransferir(contaOrigem, contaDestino, valor);
+		
+		return comando.execute();
 	}
 }

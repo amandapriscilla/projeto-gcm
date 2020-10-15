@@ -4,5 +4,5 @@ import java.math.BigDecimal;
 
 public interface ComandoBanco {
 	
-	public BigDecimal execute();
+	public BigDecimal execute() throws Exception;
 }

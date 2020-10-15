@@ -2,29 +2,19 @@ package com.ufrn.gcm.comando;
 
 import java.math.BigDecimal;
 
-import com.ufrn.gcm.dominio.Banco;
 import com.ufrn.gcm.dominio.ContaBancaria;
 
 public class ComandoVerSaldo implements ComandoBanco {
 
-	private Banco banco;
-	private int numero;
+	private ContaBancaria conta;
 	
-	public ComandoVerSaldo(Banco banco, int numeroConta) {
-		this.banco = banco;
-		this.numero = numeroConta;
+	public ComandoVerSaldo(ContaBancaria conta) {
+		this.conta = conta;
 	}
 		
 	@Override
-	public BigDecimal execute() {
-		
-		for (ContaBancaria conta : banco.getContas()) {
-			if (conta.getNumero() == numero) {
-				return conta.getSaldo();
-			}
-		}
-		
-		return null;
+	public BigDecimal execute() throws Exception {
+		return conta.getSaldo();
 	}
 
 }
