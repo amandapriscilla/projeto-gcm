@@ -19,4 +19,13 @@ public class Banco {
 		this.contas = contas;
 	}
 	
+	public ContaBancaria getContaBancaria(int numero) {
+		for (ContaBancaria conta : contas) {
+			if (conta.getNumero() == numero) {
+				return conta;
+			}
+		}
+		return null;
+	}
+	
 }
