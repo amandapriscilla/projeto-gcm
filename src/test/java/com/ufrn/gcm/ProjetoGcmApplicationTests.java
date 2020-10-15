@@ -1,6 +1,7 @@
 package com.ufrn.gcm;
 
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,8 +29,22 @@ class ProjetoGcmApplicationTests {
 	}
 	
 	@Test
+	void testarFalhaVerSaldo() throws Exception {
+		assertThrows(Exception.class, () -> {
+			bancoService.verSaldo(12344);
+		});
+	}
+	
+	@Test
 	void testarCreditar() throws Exception {
 		assertEquals(bancoService.creditarConta(12345, BigDecimal.TEN), BigDecimal.TEN);
+	}
+	
+	@Test
+	void testarCreditarNegativo() throws Exception {
+		assertThrows(Exception.class, () -> {
+			bancoService.creditarConta(12345, new BigDecimal(-200));
+		});
 	}
 	
 	@Test
@@ -37,6 +52,11 @@ class ProjetoGcmApplicationTests {
 		assertThrows(Exception.class, () -> {
 			bancoService.debitarConta(12345, new BigDecimal(200));
 		});
+	}
+	
+	@Test
+	void testarDebitar() throws Exception {
+		assertEquals(bancoService.debitarConta(23456, new BigDecimal(90)), BigDecimal.TEN);
 	}
 	
 	@Test
