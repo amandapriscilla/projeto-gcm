@@ -3,18 +3,26 @@ package com.ufrn.gcm.controller;
 import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ufrn.gcm.service.BancoService;
 
-@RestController
+@Controller
 public class BancoController {
 	
 	@Autowired
 	private BancoService bancoService;
-	
+
+	@RequestMapping("/")
+	public String index() {
+		return "index";
+	}
+
+	// METODOS DE ACESSO RESTFUL
+
 	@GetMapping("/verSaldo/{numero}")
 	public String verSaldo(@PathVariable(value = "numero") int numeroConta) {
 		try {
