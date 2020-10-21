@@ -41,7 +41,7 @@ public class BancoService {
 			conta.setSaldo(new BigDecimal(200));
 			banco.getContas().add(conta);
 		}
-    }
+	}
 	
 	public String formatarMoeda(BigDecimal saldo) {
 		return NumberFormat.getCurrencyInstance().format(saldo.setScale(2).doubleValue());
@@ -51,7 +51,7 @@ public class BancoService {
 		ContaBancaria conta = this.banco.getContaBancaria(numero);
 		
 		if (conta == null) {
-			throw new Exception(String.format("Erro: Conta %d nÃ£o encontrada!"));
+			throw new Exception(String.format("Erro: Conta %d não encontrada!", numero));
 		}
 		
 		return conta;
@@ -81,5 +81,13 @@ public class BancoService {
 		ComandoBanco comando = new ComandoTransferir(contaOrigem, contaDestino, valor);
 		
 		return comando.execute();
+	}
+
+	public int getNumeroValido(String numeroConta) throws Exception {
+		try {
+			return Integer.parseInt(numeroConta);
+		} catch(Exception e) {
+			throw new Exception("Erro: Número da Conta Inválido!");
+		}
 	}
 }

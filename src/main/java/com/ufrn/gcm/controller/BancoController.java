@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ufrn.gcm.service.BancoService;
 
@@ -19,6 +22,21 @@ public class BancoController {
 	@RequestMapping("/")
 	public String index() {
 		return "index";
+	}
+	
+	@PostMapping("/app")
+	public String entrarConta(@RequestParam("numero") String numeroConta, ModelMap modelMap) {
+
+		try {
+			BigDecimal saldo = bancoService.verSaldo(bancoService.getNumeroValido(numeroConta));
+			modelMap.put("conta", numeroConta);
+			modelMap.put("saldo", bancoService.formatarMoeda(saldo));
+			return "app";
+		} catch (Exception e) {
+			e.printStackTrace();
+			modelMap.put("erro", e.getMessage());
+			return "index";
+		}
 	}
 
 	// METODOS DE ACESSO RESTFUL

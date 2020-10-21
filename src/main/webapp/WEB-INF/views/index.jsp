@@ -13,6 +13,7 @@ pageEncoding="ISO-8859-1"%>
 
 	<div class="form">
 		<form action="app" method="post">
+			<h4 style="color: red">${erro}</h4>
 			<div>
 				<label>Digite o Número da Conta:</label><br/>
 				<input id="numero" name="numero"><br/>
