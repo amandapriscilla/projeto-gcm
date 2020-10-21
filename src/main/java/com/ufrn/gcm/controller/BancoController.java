@@ -42,11 +42,6 @@ public class BancoController {
 		}
 	}
 	
-	/*@GetMapping("/creditar")
-	public String teste(ModelMap modelMap) {
-		return "creditar";
-	}*/
-	
 	@PostMapping("/creditar")
 	public String creditarConta(@RequestParam("valor") BigDecimal valorCreditado, ModelMap modelMap) {
 		
@@ -61,6 +56,22 @@ public class BancoController {
 			}	
 		}
 		return "creditar";
+	}
+	
+	@PostMapping("/debitar")
+	public String debitarConta(@RequestParam("valor") BigDecimal valorDebitado, ModelMap modelMap) {
+		
+		if(valorDebitado!=null) {
+			try {
+				bancoService.debitarConta(this.numeroConta, valorDebitado);
+				return "index";
+			} catch (Exception e) {
+				e.printStackTrace();
+				modelMap.put("erro", e.getMessage());
+				return "debitar";
+			}	
+		}
+		return "debitar";
 	}
 
 	// METODOS DE ACESSO RESTFUL

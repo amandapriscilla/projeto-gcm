@@ -21,9 +21,11 @@ pageEncoding="ISO-8859-1"%>
 			<form action="creditar" method="post">
   			 <button type="submit" name="valor">Realizar Credito</button>
 			</form>
+			<form action="debitar" method="post">
+  			 <button type="submit" name="valor">Realizar Debito</button>
+			</form>
 		
 		<ul>
-			<li><a href="#">Realizar Débito</a></li>
 			<li><a href="#">Realizar Transferência</a></li>
 		</ul>
 	</div>
