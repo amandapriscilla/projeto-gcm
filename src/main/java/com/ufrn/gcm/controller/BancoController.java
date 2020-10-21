@@ -18,6 +18,8 @@ public class BancoController {
 	
 	@Autowired
 	private BancoService bancoService;
+	
+	private int numeroConta;
 
 	@RequestMapping("/")
 	public String index() {
@@ -28,6 +30,7 @@ public class BancoController {
 	public String entrarConta(@RequestParam("numero") String numeroConta, ModelMap modelMap) {
 
 		try {
+			this.numeroConta = Integer.parseInt(numeroConta);
 			BigDecimal saldo = bancoService.verSaldo(bancoService.getNumeroValido(numeroConta));
 			modelMap.put("conta", numeroConta);
 			modelMap.put("saldo", bancoService.formatarMoeda(saldo));
@@ -37,6 +40,27 @@ public class BancoController {
 			modelMap.put("erro", e.getMessage());
 			return "index";
 		}
+	}
+	
+	/*@GetMapping("/creditar")
+	public String teste(ModelMap modelMap) {
+		return "creditar";
+	}*/
+	
+	@PostMapping("/creditar")
+	public String creditarConta(@RequestParam("valor") BigDecimal valorCreditado, ModelMap modelMap) {
+		
+		if(valorCreditado!=null) {
+			try {
+				bancoService.creditarConta(this.numeroConta, valorCreditado);
+				return "index";
+			} catch (Exception e) {
+				e.printStackTrace();
+				modelMap.put("erro", e.getMessage());
+				return "creditar";
+			}	
+		}
+		return "creditar";
 	}
 
 	// METODOS DE ACESSO RESTFUL

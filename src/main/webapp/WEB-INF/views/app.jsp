@@ -17,8 +17,12 @@ pageEncoding="ISO-8859-1"%>
 		
 		
 		<h3>Menu</h3>
+
+			<form action="creditar" method="post">
+  			 <button type="submit" name="valor">Realizar Credito</button>
+			</form>
+		
 		<ul>
-			<li><a href="#">Realizar Credito</a></li>
 			<li><a href="#">Realizar Débito</a></li>
 			<li><a href="#">Realizar Transferência</a></li>
 		</ul>
