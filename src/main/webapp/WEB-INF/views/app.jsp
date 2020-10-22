@@ -14,20 +14,15 @@ pageEncoding="ISO-8859-1"%>
 	<hr>
 
 	<div class="form">
-		
-		
-		<h3>Menu</h3>
 
-			<form action="creditar" method="post">
-  			 <button type="submit" name="valor">Realizar Credito</button>
+		<h3>Menu</h3>
+			<form method="post">
+				<input type="hidden" name="numero" value="${conta}" />
+				<button type="submit" onclick="form.action='creditar';">Realizar Credito</button>
+				<button type="submit" onclick="form.action='debitar';">Realizar Debito</button>
+			 	<button type="submit" onclick="form.action='transferir';">Realizar Transferência</button>
+			 	<button type="submit" onclick="form.action='index'">Sair</button>
 			</form>
-			<form action="debitar" method="post">
-  			 <button type="submit" name="valor">Realizar Debito</button>
-			</form>
-		
-		<ul>
-			<li><a href="#">Realizar Transferência</a></li>
-		</ul>
 	</div>
 
 </body>
