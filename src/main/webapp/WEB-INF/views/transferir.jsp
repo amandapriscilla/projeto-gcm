@@ -6,11 +6,22 @@ pageEncoding="ISO-8859-1"%>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
 <title>Sistema Bancario GCM - Transferir</title>
+<style>
+	.form, .header{
+		margin: 10px;
+	}
+	.menu {
+		display: block;
+		margin: 10px;
+	}
+</style>
 </head>
 <body>
+	<div class="header">
 	<h1>Sistema Bancario GCM - Transferir</h1>
 	<h4>Conta: ${conta}</h4>
 	<h4>Saldo: ${saldo}</h4>
+	</div>
 	<hr>
 
 	<div class="form">
@@ -22,7 +33,7 @@ pageEncoding="ISO-8859-1"%>
 				<input type="text" name="valor"><br/>
 				<label>Digite o numero da conta de destino:</label><br/>
 				<input type="text" name="destino"><br/>
-				<input type="submit" value="Debitar"><br/>
+				<input type="submit" class="menu" value="Debitar"><br/>
 			</div>
 		</form>
 	</div>
