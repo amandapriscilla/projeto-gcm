@@ -1,6 +1,7 @@
 package com.ufrn.gcm.controller;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,10 +19,8 @@ public class BancoController {
 	
 	@Autowired
 	private BancoService bancoService;
-	
-	private int numeroConta;
 
-	@RequestMapping("/")
+	@RequestMapping(value={"", "/", "index"})
 	public String index() {
 		return "index";
 	}
@@ -30,10 +29,8 @@ public class BancoController {
 	public String entrarConta(@RequestParam("numero") String numeroConta, ModelMap modelMap) {
 
 		try {
-			this.numeroConta = Integer.parseInt(numeroConta);
 			BigDecimal saldo = bancoService.verSaldo(bancoService.getNumeroValido(numeroConta));
-			modelMap.put("conta", numeroConta);
-			modelMap.put("saldo", bancoService.formatarMoeda(saldo));
+			populaDados(numeroConta, saldo, modelMap);
 			return "app";
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -42,36 +39,81 @@ public class BancoController {
 		}
 	}
 	
+	private void populaDados(String numeroConta, BigDecimal saldo, ModelMap modelMap) {
+		modelMap.put("conta", numeroConta);
+		modelMap.put("saldo", bancoService.formatarMoeda(saldo));
+	}
+	
 	@PostMapping("/creditar")
-	public String creditarConta(@RequestParam("valor") BigDecimal valorCreditado, ModelMap modelMap) {
-		
-		if(valorCreditado!=null) {
-			try {
-				bancoService.creditarConta(this.numeroConta, valorCreditado);
-				return "index";
-			} catch (Exception e) {
-				e.printStackTrace();
-				modelMap.put("erro", e.getMessage());
-				return "creditar";
-			}	
+	public String creditarConta(@RequestParam("numero") String numeroConta,
+			@RequestParam("valor") Optional<BigDecimal> valorCreditado, ModelMap modelMap) {
+		BigDecimal saldo = BigDecimal.ZERO;;
+		String pagina = "creditar";
+		try {
+			if(valorCreditado.isPresent()) {
+				bancoService.creditarConta(bancoService.getNumeroValido(numeroConta), valorCreditado.get());
+				pagina = "app";
+			}
+			saldo = bancoService.verSaldo(bancoService.getNumeroValido(numeroConta));
+			populaDados(numeroConta, saldo, modelMap);
+			
+			return pagina;
+		} catch (Exception e) {
+			e.printStackTrace();
+			modelMap.put("erro", e.getMessage());
+			return "index";
 		}
-		return "creditar";
 	}
 	
 	@PostMapping("/debitar")
-	public String debitarConta(@RequestParam("valor") BigDecimal valorDebitado, ModelMap modelMap) {
+	public String debitarConta(@RequestParam("numero") String numeroConta,
+			@RequestParam("valor") Optional<BigDecimal> valorDebitado, ModelMap modelMap) {
 		
-		if(valorDebitado!=null) {
-			try {
-				bancoService.debitarConta(this.numeroConta, valorDebitado);
-				return "index";
-			} catch (Exception e) {
-				e.printStackTrace();
-				modelMap.put("erro", e.getMessage());
-				return "debitar";
-			}	
+		BigDecimal saldo = BigDecimal.ZERO;;
+		String pagina = "debitar";
+		try {
+			if(valorDebitado.isPresent()) {
+				bancoService.debitarConta(bancoService.getNumeroValido(numeroConta), valorDebitado.get());
+				pagina = "app";
+			}
+			saldo = bancoService.verSaldo(bancoService.getNumeroValido(numeroConta));
+			populaDados(numeroConta, saldo, modelMap);
+			
+			return pagina;
+		} catch (Exception e) {
+			e.printStackTrace();
+			modelMap.put("erro", e.getMessage());
+			return "index";
 		}
-		return "debitar";
+	}
+	
+	@PostMapping("/transferir")
+	public String transferir(@RequestParam("numero") String numeroConta, 
+			@RequestParam("destino") Optional<String> numeroContaDestino,
+			@RequestParam("valor") Optional<BigDecimal> valorTransferencia, ModelMap modelMap) {
+		
+		BigDecimal saldo = BigDecimal.ZERO;;
+		String pagina = "transferir";
+		try {
+			if(valorTransferencia.isPresent()) {
+				if (!numeroContaDestino.isPresent()) {
+					throw new Exception("Erro: Conta de destino não pode ser vazia!");
+				}
+				
+				bancoService.transferir(bancoService.getNumeroValido(numeroConta),
+						bancoService.getNumeroValido(numeroContaDestino.get()),
+						valorTransferencia.get());
+				pagina = "app";
+			}
+			saldo = bancoService.verSaldo(bancoService.getNumeroValido(numeroConta));
+			populaDados(numeroConta, saldo, modelMap);
+			
+			return pagina;
+		} catch (Exception e) {
+			e.printStackTrace();
+			modelMap.put("erro", e.getMessage());
+			return "index";
+		}
 	}
 
 	// METODOS DE ACESSO RESTFUL
