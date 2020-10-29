@@ -8,6 +8,18 @@ public class ContaBancaria {
 	
 	private BigDecimal saldo;
 	
+	private BigDecimal bonus;
+	
+	public ContaBancaria() {
+		this.saldo = BigDecimal.ZERO;
+		this.bonus = BigDecimal.ZERO;
+	}
+	
+	public ContaBancaria(int numero) {
+		this();
+		this.numero = numero;
+	}
+	
 	public int getNumero() {
 		return numero;
 	}
@@ -22,5 +34,13 @@ public class ContaBancaria {
 	
 	public void setSaldo(BigDecimal saldo) {
 		this.saldo = saldo;
+	}
+
+	public BigDecimal getBonus() {
+		return bonus;
+	}
+
+	public void setBonus(BigDecimal bonus) {
+		this.bonus = bonus;
 	}
 }

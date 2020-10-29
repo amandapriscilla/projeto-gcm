@@ -8,10 +8,12 @@ public class ComandoCreditar implements ComandoBanco {
 	
 	private ContaBancaria conta;
 	private BigDecimal valor;
+	private BigDecimal fatorBonificacao;
 	
-	public ComandoCreditar(ContaBancaria conta, BigDecimal valor) {
+	public ComandoCreditar(ContaBancaria conta, BigDecimal valor, BigDecimal fatorBonificacao) {
 		this.conta = conta;
 		this.valor = valor;
+		this.fatorBonificacao = fatorBonificacao;
 	}
 	
 	@Override
@@ -20,7 +22,19 @@ public class ComandoCreditar implements ComandoBanco {
 			throw new Exception("Erro: Valor a creditar não pode ser negativo!");
 		}
 		
+		if(fatorBonificacao != null &&  fatorBonificacao.compareTo(BigDecimal.ZERO) > 0) { 
+			processaBonificacao();
+		} // else ignorar = sem bonus
+		
 		conta.setSaldo(conta.getSaldo().add(valor));
 		return conta.getSaldo();
+	}
+
+	private void processaBonificacao() {
+
+		BigDecimal bonusCredito = valor.divide(fatorBonificacao);
+		BigDecimal bonusAcumulado = conta.getBonus().add(bonusCredito);
+		conta.setBonus(bonusAcumulado);
+		
 	}
 }

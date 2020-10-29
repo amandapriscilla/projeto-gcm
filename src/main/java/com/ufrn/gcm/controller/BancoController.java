@@ -30,7 +30,8 @@ public class BancoController {
 
 		try {
 			BigDecimal saldo = bancoService.verSaldo(bancoService.getNumeroValido(numeroConta));
-			populaDados(numeroConta, saldo, modelMap);
+			BigDecimal bonus = bancoService.verBonus(bancoService.getNumeroValido(numeroConta));
+			populaDados(numeroConta, saldo, bonus, modelMap);
 			return "app";
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -39,15 +40,20 @@ public class BancoController {
 		}
 	}
 	
-	private void populaDados(String numeroConta, BigDecimal saldo, ModelMap modelMap) {
+	private void populaDados(String numeroConta, BigDecimal saldo, BigDecimal bonus, ModelMap modelMap) {
 		modelMap.put("conta", numeroConta);
 		modelMap.put("saldo", bancoService.formatarMoeda(saldo));
+		if (bonus != null && bonus.compareTo(BigDecimal.ZERO) <= 0) {
+			modelMap.put("bonus", "");
+		} else {
+			modelMap.put("bonus", bancoService.formatarMoeda(bonus));
+		}
 	}
 	
 	@PostMapping("/creditar")
 	public String creditarConta(@RequestParam("numero") String numeroConta,
 			@RequestParam("valor") Optional<BigDecimal> valorCreditado, ModelMap modelMap) {
-		BigDecimal saldo = BigDecimal.ZERO;;
+		BigDecimal saldo = BigDecimal.ZERO;
 		String pagina = "creditar";
 		try {
 			if(valorCreditado.isPresent()) {
@@ -55,7 +61,8 @@ public class BancoController {
 				pagina = "app";
 			}
 			saldo = bancoService.verSaldo(bancoService.getNumeroValido(numeroConta));
-			populaDados(numeroConta, saldo, modelMap);
+			BigDecimal bonus = bancoService.verBonus(bancoService.getNumeroValido(numeroConta));
+			populaDados(numeroConta, saldo, bonus, modelMap);
 			
 			return pagina;
 		} catch (Exception e) {
@@ -69,7 +76,7 @@ public class BancoController {
 	public String debitarConta(@RequestParam("numero") String numeroConta,
 			@RequestParam("valor") Optional<BigDecimal> valorDebitado, ModelMap modelMap) {
 		
-		BigDecimal saldo = BigDecimal.ZERO;;
+		BigDecimal saldo = BigDecimal.ZERO;
 		String pagina = "debitar";
 		try {
 			if(valorDebitado.isPresent()) {
@@ -77,7 +84,8 @@ public class BancoController {
 				pagina = "app";
 			}
 			saldo = bancoService.verSaldo(bancoService.getNumeroValido(numeroConta));
-			populaDados(numeroConta, saldo, modelMap);
+			BigDecimal bonus = bancoService.verBonus(bancoService.getNumeroValido(numeroConta));
+			populaDados(numeroConta, saldo, bonus, modelMap);
 			
 			return pagina;
 		} catch (Exception e) {
@@ -106,7 +114,8 @@ public class BancoController {
 				pagina = "app";
 			}
 			saldo = bancoService.verSaldo(bancoService.getNumeroValido(numeroConta));
-			populaDados(numeroConta, saldo, modelMap);
+			BigDecimal bonus = bancoService.verBonus(bancoService.getNumeroValido(numeroConta));
+			populaDados(numeroConta, saldo, bonus, modelMap);
 			
 			return pagina;
 		} catch (Exception e) {

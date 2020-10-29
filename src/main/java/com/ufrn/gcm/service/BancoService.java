@@ -1,7 +1,6 @@
 package com.ufrn.gcm.service;
 
 import java.math.BigDecimal;
-
 import java.text.NumberFormat;
 
 import javax.annotation.PostConstruct;
@@ -9,10 +8,11 @@ import javax.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import com.ufrn.gcm.comando.ComandoBanco;
-import com.ufrn.gcm.comando.ComandoVerSaldo;
 import com.ufrn.gcm.comando.ComandoCreditar;
 import com.ufrn.gcm.comando.ComandoDebitar;
 import com.ufrn.gcm.comando.ComandoTransferir;
+import com.ufrn.gcm.comando.ComandoVerBonus;
+import com.ufrn.gcm.comando.ComandoVerSaldo;
 import com.ufrn.gcm.dominio.Banco;
 import com.ufrn.gcm.dominio.ContaBancaria;
 
@@ -25,19 +25,16 @@ public class BancoService {
     public void init() {
 		if (banco == null) {
 			banco = new Banco();
+			banco.setFatorBonificacao(new BigDecimal(100));
 			
-			ContaBancaria conta = new ContaBancaria();
-			conta.setNumero(12345);
-			conta.setSaldo(BigDecimal.ZERO);
+			ContaBancaria conta = new ContaBancaria(12345);
 			banco.getContas().add(conta);
 			
-			conta = new ContaBancaria();
-			conta.setNumero(23456);
+			conta = new ContaBancaria(23456);
 			conta.setSaldo(new BigDecimal(100));
 			banco.getContas().add(conta);
 			
-			conta = new ContaBancaria();
-			conta.setNumero(34567);
+			conta = new ContaBancaria(34567);
 			conta.setSaldo(new BigDecimal(200));
 			banco.getContas().add(conta);
 		}
@@ -63,9 +60,15 @@ public class BancoService {
 		return comando.execute();		
 	}
 	
+	public BigDecimal verBonus(int numero) throws Exception {
+		ContaBancaria conta = this.getContaBancaria(numero);
+		ComandoBanco comando = new ComandoVerBonus(conta);
+		return comando.execute();
+	}
+	
 	public BigDecimal creditarConta(int numero, BigDecimal valor) throws Exception {
 		ContaBancaria conta = this.banco.getContaBancaria(numero);
-		ComandoBanco comando = new ComandoCreditar(conta, valor);
+		ComandoBanco comando = new ComandoCreditar(conta, valor, this.banco.getFatorBonificacao());
 		return comando.execute();		
 	}
 	
