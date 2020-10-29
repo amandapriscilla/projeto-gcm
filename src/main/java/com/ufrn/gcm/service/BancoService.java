@@ -25,6 +25,7 @@ public class BancoService {
     public void init() {
 		if (banco == null) {
 			banco = new Banco();
+			banco.setFatorBonificacao(new BigDecimal(100));
 			
 			ContaBancaria conta = new ContaBancaria(12345);
 			banco.getContas().add(conta);
