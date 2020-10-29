@@ -26,18 +26,14 @@ public class BancoService {
 		if (banco == null) {
 			banco = new Banco();
 			
-			ContaBancaria conta = new ContaBancaria();
-			conta.setNumero(12345);
-			conta.setSaldo(BigDecimal.ZERO);
+			ContaBancaria conta = new ContaBancaria(12345);
 			banco.getContas().add(conta);
 			
-			conta = new ContaBancaria();
-			conta.setNumero(23456);
+			conta = new ContaBancaria(23456);
 			conta.setSaldo(new BigDecimal(100));
 			banco.getContas().add(conta);
 			
-			conta = new ContaBancaria();
-			conta.setNumero(34567);
+			conta = new ContaBancaria(34567);
 			conta.setSaldo(new BigDecimal(200));
 			banco.getContas().add(conta);
 		}
