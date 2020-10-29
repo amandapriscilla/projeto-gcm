@@ -62,7 +62,7 @@ public class BancoService {
 	
 	public BigDecimal creditarConta(int numero, BigDecimal valor) throws Exception {
 		ContaBancaria conta = this.banco.getContaBancaria(numero);
-		ComandoBanco comando = new ComandoCreditar(conta, valor);
+		ComandoBanco comando = new ComandoCreditar(conta, valor, this.banco.getFatorBonificacao());
 		return comando.execute();		
 	}
 	

@@ -16,9 +16,8 @@ public class ContaBancaria {
 	}
 	
 	public ContaBancaria(int numero) {
+		this();
 		this.numero = numero;
-		this.saldo = BigDecimal.ZERO;
-		this.bonus = BigDecimal.ZERO;
 	}
 	
 	public int getNumero() {
