@@ -1,7 +1,6 @@
 package com.ufrn.gcm.service;
 
 import java.math.BigDecimal;
-
 import java.text.NumberFormat;
 
 import javax.annotation.PostConstruct;
@@ -9,10 +8,11 @@ import javax.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import com.ufrn.gcm.comando.ComandoBanco;
-import com.ufrn.gcm.comando.ComandoVerSaldo;
 import com.ufrn.gcm.comando.ComandoCreditar;
 import com.ufrn.gcm.comando.ComandoDebitar;
 import com.ufrn.gcm.comando.ComandoTransferir;
+import com.ufrn.gcm.comando.ComandoVerBonus;
+import com.ufrn.gcm.comando.ComandoVerSaldo;
 import com.ufrn.gcm.dominio.Banco;
 import com.ufrn.gcm.dominio.ContaBancaria;
 
@@ -58,6 +58,12 @@ public class BancoService {
 		ContaBancaria conta = this.getContaBancaria(numero);
 		ComandoBanco comando = new ComandoVerSaldo(conta);
 		return comando.execute();		
+	}
+	
+	public BigDecimal verBonus(int numero) throws Exception {
+		ContaBancaria conta = this.getContaBancaria(numero);
+		ComandoBanco comando = new ComandoVerBonus(conta);
+		return comando.execute();
 	}
 	
 	public BigDecimal creditarConta(int numero, BigDecimal valor) throws Exception {

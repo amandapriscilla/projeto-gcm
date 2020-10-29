@@ -4,26 +4,20 @@ pageEncoding="ISO-8859-1"%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-
-<title>Sistema Bancario GCM - App</title>
+<link rel="stylesheet" href="default.css">
 <style>
-	.form, .header{
-		margin: 10px;
-	}
 	.menu {
-		display: block;
 		min-width: 200px;
-		margin: 10px;
 	}
 </style>
+
+<title>Sistema Bancario GCM - App</title>
+
 </head>
 <body>
-	<div class="header">
-	<h1>Sistema Bancario GCM - App</h1>
-	<h4>Conta: ${conta}</h4>
-	<h4>Saldo: ${saldo}</h4>
-	</div>
-	<hr>
+	<jsp:include page='template/header.jsp'>
+		<jsp:param name="funcionalidade" value="App"/>
+	</jsp:include>
 
 	<div class="form">
 

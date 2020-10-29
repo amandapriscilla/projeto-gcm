@@ -4,17 +4,10 @@ pageEncoding="ISO-8859-1"%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="stylesheet" href="default.css">
 
 <title>Sistema Bancario GCM</title>
-<style>
-	.form, .header{
-		margin: 10px;
-	}
-	.menu {
-		display: block;
-		margin: 10px;
-	}
-</style>
+
 </head>
 <body>
 	<div class="header">

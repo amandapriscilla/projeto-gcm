@@ -4,25 +4,15 @@ pageEncoding="ISO-8859-1"%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="stylesheet" href="default.css">
 
 <title>Sistema Bancario GCM - Transferir</title>
-<style>
-	.form, .header{
-		margin: 10px;
-	}
-	.menu {
-		display: block;
-		margin: 10px;
-	}
-</style>
+
 </head>
 <body>
-	<div class="header">
-	<h1>Sistema Bancario GCM - Transferir</h1>
-	<h4>Conta: ${conta}</h4>
-	<h4>Saldo: ${saldo}</h4>
-	</div>
-	<hr>
+	<jsp:include page='template/header.jsp'>
+		<jsp:param name="funcionalidade" value="Transferir"/>
+	</jsp:include>
 
 	<div class="form">
 		<form action="transferir" method="post">
