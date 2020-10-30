@@ -50,7 +50,7 @@ public class BancoController {
 		}
 	}
 	
-	@PostMapping("/creditar")
+	@PostMapping("/depositar")
 	public String creditarConta(@RequestParam("numero") String numeroConta,
 			@RequestParam("valor") Optional<BigDecimal> valorCreditado, ModelMap modelMap) {
 		BigDecimal saldo = BigDecimal.ZERO;

@@ -19,7 +19,7 @@ public class ComandoCreditar implements ComandoBanco {
 	@Override
 	public BigDecimal execute() throws Exception {
 		if(valor.compareTo(BigDecimal.ZERO) < 0) {
-			throw new Exception("Erro: Valor a creditar não pode ser negativo!");
+			throw new Exception("Erro: Valor depositado não pode ser negativo!");
 		}
 		
 		if(fatorBonificacao != null &&  fatorBonificacao.compareTo(BigDecimal.ZERO) > 0) { 

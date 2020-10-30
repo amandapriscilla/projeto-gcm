@@ -23,7 +23,7 @@ pageEncoding="ISO-8859-1"%>
 				<input type="text" name="valor"><br/>
 				<label>Digite o numero da conta de destino:</label><br/>
 				<input type="text" name="destino"><br/>
-				<input type="submit" class="menu" value="Debitar"><br/>
+				<input type="submit" class="menu" value="Transferir"><br/>
 			</div>
 		</form>
 	</div>
