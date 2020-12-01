@@ -1,0 +1,16 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Commit Issue Commenter
+
+on: push
+
+jobs:
+  checkCommit:
+    name: Comment From Commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amandapriscilla/commit-issue-commenter-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
