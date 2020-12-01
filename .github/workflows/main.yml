@@ -9,7 +9,7 @@ jobs:
     name: Comment From Commit
     runs-on: ubuntu-latest
     steps:
-      - uses: amandapriscilla/commit-issue-commenter-action@master
+      - uses: amandapriscilla/projeto-gcm@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
