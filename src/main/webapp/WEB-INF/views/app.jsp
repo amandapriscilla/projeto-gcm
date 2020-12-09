@@ -30,7 +30,7 @@ pageEncoding="ISO-8859-1"%>
 		<h3>Menu</h3>
 			<form method="post">
 				<input type="hidden" name="numero" value="${conta}" />
-				<button type="submit" class="menu" onclick="form.action='creditar';">Realizar Credito</button>
+				<button type="submit" class="menu" onclick="form.action='depositar';">Realizar Depósito</button>
 				<button type="submit" class="menu" onclick="form.action='debitar';">Realizar Debito</button>
 			 	<button type="submit" class="menu" onclick="form.action='transferir';">Realizar Transferência</button>
 			 	<button type="submit" class="menu" onclick="form.action='index'">Sair</button>

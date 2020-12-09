@@ -44,7 +44,7 @@ public class BancoController {
 		modelMap.put("saldo", bancoService.formatarMoeda(saldo));
 	}
 	
-	@PostMapping("/creditar")
+	@PostMapping("/depositar")
 	public String creditarConta(@RequestParam("numero") String numeroConta,
 			@RequestParam("valor") Optional<BigDecimal> valorCreditado, ModelMap modelMap) {
 		BigDecimal saldo = BigDecimal.ZERO;;

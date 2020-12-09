@@ -1,0 +1,4 @@
+- name: Comment on Issue from Commit
+  # You may pin to the exact commit or the version.
+  # uses: adamzolyak/commit-issue-commenter-action@25e2a3ed1124280052300a2d0e5af61f457ba504
+  uses: adamzolyak/commit-issue-commenter-action@2.0.1
