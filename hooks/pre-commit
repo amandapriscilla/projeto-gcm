@@ -1,0 +1,136 @@
+#!/usr/bin/env node
+
+/**
+ * Script para verificar se o nome da branch inicia com um numero de issue valido separado por hifen do resto do nome
+ * 
+ * Para funcionar, colocar esse arquivo no diretorio .git/hooks de um git repositorio cliente.
+ * 
+ * Necessario ter o node instalado e tornar o arquivo executavel: chmod +x .git/hooks/pre-commit.
+ *
+ * @author Amanda Priscilla
+ */
+
+const childProcessExec = require('child_process').exec;
+const util = require('util');
+const BRANCH_NOME_REGEX = /^[0-9]{1,6}-/;
+const TIMEOUT_THRESHOLD = 3000;
+
+const https = require('https');
+const endpoint = '/search/issues?q=repo:amandapriscilla/projeto-gcm+state:open';
+
+var apiConfig = {
+    host: 'api.github.com',
+    path: endpoint,
+    method: 'GET',
+    headers: {'user-agent': 'node.js'}
+};
+
+const exec = util.promisify(childProcessExec);
+
+verificarNomeBranch();
+notificarTimeoutHook();
+
+async function verificarNomeBranch(){
+
+  let branchName = '';
+  try{
+    branchName = await getNomeBranch();
+    console.log('\nPRE-COMMIT: Validando nome da branch: ' + branchName + '...');
+  }
+  catch (e){
+    notificarExcecaoComandoGit(e);
+  }
+
+  if( ! BRANCH_NOME_REGEX.test(branchName) ){
+    notificarBranchInvalida();
+  }
+
+  var match = BRANCH_NOME_REGEX.exec(branchName)[0];
+  var issueId = match.substring(0, match.length-1);
+
+  validarIssueRepositorio(issueId);
+
+}
+
+async function getNomeBranch() {
+
+  const branchesOutput = await exec('git branch');
+  if( branchesOutput.stderr){
+    throw new Error(stderr);
+  }
+  const branches = branchesOutput.stdout;
+  return branches.split('\n').find(b => b.trim().charAt(0) === '*' ).trim().substring(2);
+}
+
+function validarIssueRepositorio(issueId) {
+
+  var request = https.request(apiConfig, (resp) => {
+    let data = '';
+
+    // A chunk of data has been recieved.
+    resp.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    // The whole response has been received. Print out the result.
+    resp.on('end', () => {
+      var issues = JSON.parse(data).items;
+      var issueIds;
+      var issueFound;
+      var isValid = false;
+      issues.forEach(function(issue) {
+         if (issueIds) {
+           issueIds += ', #' + issue.number;
+         } else {
+     issueIds = 'IDS VALIDOS: #' + issue.number;
+   }
+         if (issueId == issue.number) {
+           isValid = true;
+           issueFound = issue;
+         }
+      });
+      if (isValid) {
+         console.log('BRANCH COM NOME VALIDO, ISSUE ID: ' + issueId);
+         console.log('#' + issueFound.number + ' - ' + issueFound.title);
+         console.log(issueFound.url);
+
+         process.exit(0); // SUCESSO! TROCAR PARA 1 PARA TESTES, 0 PARA PRODUCAO
+      }
+      
+      // FALHA! DADOS INVALIDOS!
+      console.log('Id #'+ issueId + ' nao corresponde a uma issue valida ou aberta');
+      console.log(issueIds);
+      console.log('Seu commit foi  rejeitado, tente novamente com um id valido ou crie/altere a issue com o id correspondente!');
+      process.exit(1);
+    });
+  }).on("error", (err) => {
+    console.log("Error: " + err.message);
+    process.exit(1);
+  });
+
+  request.end();
+}
+
+function notificarExcecaoComandoGit(e){
+  console.log('O seguinte erro ocorreu ao tentar ler o nome da branch:');
+  console.log(e.getMessage() );
+  console.log('----');
+  console.log('Seu commit foi rejeitado, por favor inicie o nome da branch com o numero da issue no padrão: ' + BRANCH_NOME_REGEX);
+  process.exit(1);
+}
+
+function notificarBranchInvalida(){
+  
+  console.log('Nome da branch invalida, deve seguir o padrão: ' + BRANCH_NOME_REGEX);
+  process.exit(1);
+}
+
+function notificarTimeoutHook(){
+
+  setTimeout(() => {
+    console.log('Esta mensagem de timeout do seu git hook commit-msg. Algo ocorreu de errado em seu pre-commit hook, e seu commit foi rejeitado, verifique o script do git hook commit-msg.');
+    console.log(' Leia mais sobre neste link: https://git-scm.com/book/uz/v2/Customizing-Git-An-Example-Git-Enforced-Policy');
+    process.exit(1);
+  },TIMEOUT_THRESHOLD);
+
+}

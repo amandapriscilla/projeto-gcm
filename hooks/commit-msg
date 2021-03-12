@@ -1,0 +1,140 @@
+#!/usr/bin/env node
+
+/**
+ * Script para verificar se a mensagem do commit contem o numero de issue valido em um formato especifico: "#issueId"
+ * 
+ * Para funcionar, colocar esse arquivo no diretorio .git/hooks de um git repositorio cliente.
+ * 
+ * Necessario ter o node instalado e tornar o arquivo executavel: chmod +x .git/hooks/commit-msg.
+ *
+ * @author Amanda Priscilla
+ */
+
+const fs = require('fs');
+const dateFormat = require('dateformat');
+const util = require('util');
+const ISSUE_ID_PATTERN  = /^#[0-9]{1,6}-/;
+const TIMEOUT_THRESHOLD = 3000;
+
+const childProcessExec = require('child_process').exec;
+const exec = util.promisify(childProcessExec);
+
+const https = require('https');
+const endpoint = '/search/issues?q=repo:amandapriscilla/projeto-gcm+state:open';
+
+var options = {
+    host: 'api.github.com',
+    path: endpoint,
+    method: 'GET',
+    headers: {'user-agent': 'node.js'}
+};
+
+
+verificarMensagemCommit();
+notificarTimeoutHook();
+
+
+async function verificarMensagemCommit(){
+
+  const message = fs.readFileSync(process.argv[2], 'utf8').trim();
+  console.log('\nCOMMIT-MSG: Validando mensagem do commit..');
+
+  if(! ISSUE_ID_PATTERN.test(message) ){
+    notificarFalhaMensagem();
+    process.exit(1);
+  } else {
+    var match = ISSUE_ID_PATTERN.exec(message)[0];
+    var issueId = match.substring(1, match.length-1);
+
+    const files = await exec('git diff --name-only --staged');
+    var filenames = files.stdout;
+
+    validarIssueRepositorio(issueId, message, filenames);
+
+  }
+
+}
+
+function validarIssueRepositorio(issueId, message, filenames) {
+
+  var request = https.request(options, (resp) => {
+    let data = '';
+
+    // A chunk of data has been recieved.
+    resp.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    // The whole response has been received. Print out the result.
+    resp.on('end', () => {
+      var issues = JSON.parse(data).items;
+      var issueIds;
+      var issueFound;
+      var isValid = false;
+      issues.forEach(function(issue) {
+         if (issueIds) {
+           issueIds += ', #' + issue.number;
+         } else {
+	         issueIds = 'IDS VALIDOS: #' + issue.number;
+	       }
+
+         if (issueId == issue.number) {
+           isValid = true;
+           issueFound = issue;
+         }
+      });
+      if (isValid) {
+         formatarMensagemCommit(issueFound, message, filenames);
+
+         process.exit(0); // SUCESSO! TROCAR PARA 1 PARA TESTES, 0 PARA PRODUCAO
+      }
+      
+      console.log('Id #'+ issueId + ' nao corresponde a uma issue valida ou aberta');
+      console.log(issueIds);
+      console.log('Seu commit foi  rejeitado, tente novamente com um id valido ou crie/altere a issue com o id correspondente!');
+      process.exit(1);
+    });
+  }).on("error", (err) => {
+    console.log("Error: " + err.message);
+    process.exit(1);
+  });
+
+  request.end();
+}
+
+function formatarMensagemCommit(issueFound, message, filenames) {
+  console.log('COMENTARIO DE COMMIT VALIDO, ISSUE ID: #' + issueFound.number + ' - ' + issueFound.title);
+
+  var single_line = message.replace(/\r/g, "").replace(/\n/g, " - ");
+  single_line = single_line.replace("  ", " ").replace(/- -/g, "-");
+  var commit_time = dateFormat(new Date(), "yyyy-mm-dd HH:MM");
+
+  var contents = util.format('%s\n\n- Autor: %s\n- Data: %s\n- Arquivos alterados:\n%s\n#COMMENT %s',
+                    message, process.env.GIT_AUTHOR_NAME, commit_time, filenames, single_line);
+
+  console.log('\nMENSAGEM DO COMMIT FORMATADA:');
+  console.log('-------------------------------\n');
+  console.log(contents);
+  console.log('\n-------------------------------\n');
+
+  // Substitui mensagem do commit
+  fs.writeFileSync(process.argv[2], contents); 
+}
+
+
+function notificarFalhaMensagem(){
+  
+  console.log('### ERRO: Houve uma falha ao tentar realizar o commit! ###');
+  console.log('A mensagem deve iniciar com um id valido da tarefa no GitHub, usando o formato #issueId, seguido por um hifen, formato:' + ISSUE_ID_PATTERN + ' ou seu commit será recusado.');
+  console.log('Por favor, repita o commit com a mensagem adequada, ou verifique o funcionamento do git hook commit-msg');
+}
+
+function notificarTimeoutHook(){
+
+  setTimeout(() => {
+    console.log('Esta mensagem de timeout do seu git hook commit-msg. Algo ocorreu de errado em seu pre-commit hook, e seu commit foi rejeitado, verifique o script do git hook commit-msg.');
+    console.log(' Leia mais sobre neste link: https://git-scm.com/book/uz/v2/Customizing-Git-An-Example-Git-Enforced-Policy');
+    process.exit(1);
+  },TIMEOUT_THRESHOLD);
+
+}
